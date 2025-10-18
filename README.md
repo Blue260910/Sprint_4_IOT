@@ -38,6 +38,8 @@ Este repositório conta com um usuário de teste já configurado para facilitar 
 - Integração com Supabase para backend e autenticação
 - Busca e cards de ações/ativos
 - Interface responsiva e acessível
+- **Cadastro facial:** Permite cadastrar o rosto do usuário via câmera, enviando a imagem para o backend.
+- **Reconhecimento facial:** Detecta e reconhece rostos em tempo real, integrando com o backend Python.
 
 ---
 
@@ -67,6 +69,7 @@ contexts/           # Contextos globais (Auth, Form)
 hooks/              # Hooks customizados
 lib/                # Integrações (auth, supabase, gemini, tema, validação)
 assets/             # Imagens, ícones, animações
+backend/           # Backend Python (reconhecimento facial)
 ```
 
 ---
@@ -74,44 +77,78 @@ assets/             # Imagens, ícones, animações
 ## ▶️ Instalação e Execução
 
 1. **Clone o repositório:**
-   ```bash
-   git clone <url-do-repo>
-   cd Challenge-xp-app
-   ```
+  ```bash
+  git clone <url-do-repo>
+  cd Challenge-xp-app
+  ```
 2. **Instale as dependências:**
-   ```bash
-   npm install
-   # ou
-   yarn
-   ```
-3. **Rode o app em modo desenvolvimento:**
-   ```bash
-   npm run dev
-   # ou
-   expo start
-   ```
+  ```bash
+  npm install
+  # ou
+  yarn
+  ```
+3. **Rode o app:**
+  - **App Expo:**
+    ```bash
+    npx expo start
+    ```
+  - **Backend (na pasta backend):**
+    ```bash
+    py -3.10 -m uvicorn realtime_api:app --reload --host 0.0.0.0
+    ```
+
 4. **Abra no emulador ou Expo Go (Android/iOS)**
 
 ---
 
 ## 🏗️ Build e Publicação
-- **Web:**
   ```bash
   npm run build:web
   ```
-- **Android:**
   ```bash
   npm run android
   ```
-- **iOS:**
   ```bash
   npm run ios
   ```
 
 Veja a [documentação do Expo](https://docs.expo.dev/) para detalhes de build e publicação.
 
----
 
+## 🧠 Backend: Reconhecimento Facial
+
+O backend da aplicação é responsável pelo processamento e reconhecimento facial dos usuários. Ele foi desenvolvido em Python utilizando FastAPI e Uvicorn, e realiza as seguintes funções:
+
+- Recebe imagens capturadas pelo app via API
+- Detecta rostos usando o modelo Haar Cascade
+- Realiza cadastro facial, salvando imagens e associando ao nome do usuário
+- Faz reconhecimento facial em tempo real, retornando resultados para o app
+- Gerencia pastas de faces conhecidas e desconhecidas
+
+### Estrutura do backend
+
+```
+backend/
+  realtime_api.py           # API principal (FastAPI)
+  requirements.txt          # Dependências Python
+  haarcascade_frontalface_default.xml # Modelo de detecção facial
+  saved_faces/              # Imagens cadastradas
+  unknown_faces/            # Imagens não reconhecidas
+```
+
+### Como rodar o backend
+
+1. Instale as dependências:
+  ```bash
+  cd backend
+  pip install -r requirements.txt
+  ```
+2. Inicie o servidor:
+  ```bash
+  py -3.10 -m uvicorn realtime_api:app --reload --host 0.0.0.0
+  ```
+
+O backend ficará disponível na porta 8000 por padrão. Certifique-se de que o IP configurado no app corresponde ao IP da máquina onde o backend está rodando.
 ## 🤝 Como Contribuir
 1. Faça um fork do projeto
 2. Crie uma branch: `git checkout -b minha-feature`

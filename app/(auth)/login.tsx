@@ -42,11 +42,8 @@ import AsyncStorage from '@react-native-async-storage/async-storage';
       if (!result) {
         // Login bem-sucedido: salva credenciais para biometria
         try {
-          await import('@react-native-async-storage/async-storage').then(AsyncStorageModule => {
-            const AsyncStorage = AsyncStorageModule.default;
-            AsyncStorage.setItem('user_email', data.email);
-            AsyncStorage.setItem('user_password', data.password);
-          });
+          await AsyncStorage.setItem('user_email', data.email);
+          await AsyncStorage.setItem('user_password', data.password);
         } catch (e) {
           // Não impede login, apenas loga erro
           console.error('Erro ao salvar credenciais para biometria:', e);

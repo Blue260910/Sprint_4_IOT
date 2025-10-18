@@ -14,6 +14,8 @@ import { startChat, sendMessage, Usuario } from '@/lib/gemini';
 import AsyncStorage from '@react-native-async-storage/async-storage';
 import { useFormContext } from '../../contexts/FormContext';
 import Markdown from 'react-native-markdown-display';
+import { useNavigation } from '@react-navigation/native';
+
 
 
 // Card para exibir dados financeiros
@@ -201,11 +203,25 @@ export default function ChatScreen() {
   const [chatStarted, setChatStarted] = useState(false);
   const [userId, setUserId] = useState<string | null>(null);
   const scrollViewRef = useRef<ScrollView>(null);
+  const navigation = useNavigation();
 
-  // Recupera dados do formulário ao abrir o chat
-  useEffect(() => {
-    if (recuperarDados) recuperarDados();
-  }, []);
+  // Verifica flag de reconhecimento facial toda vez que a tela do Chat ganha foco
+  React.useEffect(() => {
+    const unsubscribe = navigation.addListener('focus', async () => {
+      const AsyncStorage = (await import('@react-native-async-storage/async-storage')).default;
+      const isRecognized = await AsyncStorage.getItem('is_recognized');
+      if (isRecognized !== 'true') {
+        // Se não reconhecido, redireciona para ReconhecimentoScreen
+        // @ts-ignore
+        navigation.navigate('ReconhecimentoScreen');
+      } else {
+        // Limpa a flag para exigir reconhecimento novamente na próxima vez
+        await AsyncStorage.removeItem('is_recognized');
+        if (recuperarDados) recuperarDados();
+      }
+    });
+    return unsubscribe;
+  }, [navigation]);
 
   // Sempre rola para o final quando as mensagens mudam
   useEffect(() => {

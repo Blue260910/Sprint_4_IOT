@@ -26,13 +26,45 @@ import { useFormContext } from '../../contexts/FormContext';
 import { useEffect } from 'react';
 import { StockSearchModal } from '../../components/ui/StockSearchModal';
 import { useState } from 'react';
+import { useRoute } from '@react-navigation/native';
+
+
 
 export default function HomeScreen() {
   const navigation = useNavigation();
   const { recuperarDados } = useFormContext();
+  const { user } = useAuth();
+  const route = useRoute();
+
+
   useEffect(() => {
     if (recuperarDados) recuperarDados();
-  }, []);
+    // Verifica se o usuário já tem rosto cadastrado
+
+    console.log('rota home', route.name);
+    const checkFaceRegistered = async () => {
+      if (!user) return;
+      try {
+        // Supondo que o backend aceite email ou id para checar rosto
+        const res = await fetch('http://192.168.0.249:8000/diagnostico');
+        const data = await res.json();
+        if (!data || !data.saved_faces_count || data.saved_faces_count === 0) {
+          console.log('Rosto não cadastrado. Redirecionando para cadastro...');
+          // Redireciona para a tela de cadastro de rosto
+          // @ts-ignore
+          navigation.navigate('CadastroScreen');
+          
+        } else {
+          console.log('Rosto já cadastrado.');
+
+        }
+      } catch (e) {
+        // Em caso de erro, pode redirecionar para cadastro ou mostrar alerta
+        console.error('Erro ao verificar rosto cadastrado:', e);
+      }
+    };
+    checkFaceRegistered();
+  }, [user]);
 
   const [isSearchButtonExpand, setisSearchButtonExpand] = useState(false);
 
@@ -43,9 +75,7 @@ export default function HomeScreen() {
   const [isSearchModalVisible, setIsSearchModalVisible] = useState(false);
   const [searchText, setSearchText] = useState('');
 
-  const { formState } = useFormContext();
 
-  const { user } = useAuth();
 
   // Get first part of email as username
   const username = user?.user_metadata.first_name || 'User';

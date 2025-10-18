@@ -28,6 +28,8 @@ import FormPreferences from '@/app/(app)/form/preferences';
 import FormTerms from '@/app/(app)/form/terms';
 import FormSuccess from '@/app/(app)/form/success';
 import ChatScreen from '@/app/(app)/chat';
+import CadastroScreen from './CadastroScreen';
+import ReconhecimentoScreen from './ReconhecimentoScreen';
 
 const Drawer = createDrawerNavigator();
 
@@ -100,6 +102,18 @@ export default function AppLayout() {
           }}
         />
 
+        {/* Form screens hidden from the drawer */}
+
+        <Drawer.Screen
+          name="ReconhecimentoScreen"
+          component={ReconhecimentoScreen}
+          options={{ drawerItemStyle: { display: 'none' } }}
+        />
+        <Drawer.Screen
+          name="CadastroScreen"
+          component={CadastroScreen}
+          options={{ drawerItemStyle: { display: 'none' } }}
+        />
         {/* Form screens hidden from the drawer */}
         <Drawer.Screen
           name="FormPersonal"
